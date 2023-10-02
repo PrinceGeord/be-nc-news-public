@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
+const util = require("util");
 
 beforeEach(() => {
   return seed(data);
@@ -35,21 +36,17 @@ describe("api/topics", () => {
   });
 });
 
-describe.only("/api", () => {
+describe("/api", () => {
   test("should return an object describing all available endpoints", () => {
     return request(app)
       .get("/api")
       .then(({ body }) => {
-        const sampleEndPoint = {
-          description:
-            "serves up a json representation of all the available endpoints of the api",
-          queries: [],
-          exampleResponse: {
-            topics: "/api/topics",
-            articles: "/api/articles",
-          },
-        };
-        expect(body.endpoints["GET /api"]).toEqual(sampleEndPoint);
+        const sampleEndpoint = require("../endpoints.json");
+        const endpointKeys = Object.keys(sampleEndpoint);
+        endpointKeys.forEach((key) => {
+          const value = body.endpoints[key];
+          util.isDeepStrictEqual(value, sampleEndpoint[key]);
+        });
       });
   });
 });
