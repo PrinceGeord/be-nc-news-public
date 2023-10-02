@@ -22,7 +22,7 @@ describe("api setup", () => {
   });
 });
 
-describe("api/topics", () => {
+describe("GET api/topics", () => {
   test("should return an array of objects with the correct properties", () => {
     return request(app)
       .get("/api/topics")
@@ -36,7 +36,7 @@ describe("api/topics", () => {
   });
 });
 
-describe("/api", () => {
+describe("GET /api", () => {
   test("should return an object describing all available endpoints", () => {
     return request(app)
       .get("/api")
@@ -49,4 +49,36 @@ describe("/api", () => {
         });
       });
   });
+});
+describe("GET /api/articles", () => {
+  test("should return a 200 status code", () => {
+    return request(app).get("/api/articles").expect(200);
+  });
+
+  // test("should return an array of article objects with the correct properties", () => {
+  //   return request(app)
+  //     .get("/api/articles")
+  //     .then(({ body }) => {
+  //       expect(body.articles).toHaveLength(13);
+  //       body.articles.forEach((article) => {
+  //         expect(article).hasOwnProperty("comment_count");
+  //         expect(typeof article.comment_count).toBe("number");
+  //         expect(article).hasOwnProperty("author");
+  //         expect(typeof article.author).toBe("string");
+  //         expect(article).hasOwnProperty("title");
+  //         expect(typeof article.title).toBe("string");
+  //         expect(article).hasOwnProperty("article_id");
+  //         expect(typeof article.article_id).toBe("number");
+  //         expect(article).hasOwnProperty("topic");
+  //         expect(typeof article.topic).toBe("string");
+  //         expect(article).hasOwnProperty("created_at");
+  //         expect(typeof article.created_at).toBe("number");
+  //         expect(article).hasOwnProperty("votes");
+  //         expect(typeof article.votes).toBe("number");
+  //         expect(article).hasOwnProperty("article_img_url");
+  //         expect(typeof article.article_img_url).toBe("string");
+  //         expect(article).not.hasOwnProperty("body");
+  //       });
+  // });
+  // });
 });

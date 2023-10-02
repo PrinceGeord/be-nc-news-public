@@ -1,5 +1,5 @@
 const app = require("../app");
-const { fetchTopics } = require("../models/models");
+const { fetchTopics, fetchArticles } = require("../models/models");
 const endpoints = require("../endpoints.json");
 
 exports.getHealthcheck = (req, res, next) => {
@@ -15,5 +15,10 @@ exports.getEndpoints = (req, res, next) => {
 exports.getTopics = (req, res, next) => {
   fetchTopics().then((topics) => {
     res.status(200).send({ topics });
+  });
+};
+exports.getArticles = (req, res, next) => {
+  fetchArticles().then((articles) => {
+    res.status(200).send({ articles });
   });
 };
