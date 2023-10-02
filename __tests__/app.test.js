@@ -34,3 +34,15 @@ describe("api/topics", () => {
       });
   });
 });
+
+// describe.only("/api", () => {
+//   test("should return an object describing all available endpoints", () => {
+//     return request(app)
+//       .get("/api")
+//       .then(({ body }) => {
+//         console.log(body.endpoints);
+//         expect(body.endpoints).toHaveLength(3);
+//         expect(body.endpoints[0]).toEqual();
+//       });
+//   });
+// });
