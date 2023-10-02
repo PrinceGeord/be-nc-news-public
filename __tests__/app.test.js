@@ -34,12 +34,13 @@ describe("api/topics", () => {
       });
   });
 });
-describe.only("GET /api/articles/:article_id", () => {
+describe("GET /api/articles/:article_id", () => {
   test("should return the correct object specified in the endpoint", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
+        console.log(body);
         expect(body.article).hasOwnProperty("author");
         expect(body.article).hasOwnProperty("title");
         expect(body.article).hasOwnProperty("article_id");
