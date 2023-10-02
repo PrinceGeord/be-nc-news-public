@@ -6,8 +6,6 @@ const {
 
 const app = express();
 
-app.use(express.json());
-
 app.get("/api/healthcheck", getHealthcheck);
 app.get("/api/topics", getTopics);
 
