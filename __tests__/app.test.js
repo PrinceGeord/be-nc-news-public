@@ -34,3 +34,20 @@ describe("api/topics", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id", () => {
+  //   test("should return the correct object specified in the endpoint", () => {
+  //     return request(app)
+  //       .get("/api/articles/1")
+  //       .expect(200)
+  //       .then(({ body }) => {
+  //         expect(body.article).hasOwnProperty("author");
+  //         expect(body.article).hasOwnProperty("title");
+  //         expect(body.article).hasOwnProperty("article_id");
+  //         expect(body.article).hasOwnProperty("body");
+  //         expect(body.article).hasOwnProperty("topic");
+  //         expect(body.article).hasOwnProperty("created_at");
+  //         expect(body.article).hasOwnProperty("votes");
+  //         expect(body.article).hasOwnProperty("article_img_url");
+  //       });
+  //   });
+});
