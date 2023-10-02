@@ -52,4 +52,20 @@ describe.only("GET /api/articles/:article_id", () => {
         expect(body.article.topic).toBe("mitch");
       });
   });
+  test("should return error when invalid article_id is received", () => {
+    return request(app)
+      .get("/api/articles/invalidID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should return error when valid article_id is passed that does not exist in database", () => {
+    return request(app)
+      .get("/api/articles/9999999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("id not found");
+      });
+  });
 });
