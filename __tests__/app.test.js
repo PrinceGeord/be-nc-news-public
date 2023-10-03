@@ -4,6 +4,9 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const util = require("util");
+const express = require("express");
+
+app.use(express.json());
 
 beforeEach(() => {
   return seed(data);
@@ -174,6 +177,53 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+});
+describe.only("POST /api/articles/:article_id/comments", () => {
+  test("should return a 201 status upon successful post", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .expect(201);
+  });
+  test("should return the posted object upon successful post", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .then(({ body }) => {
+        console.log(body.comment);
+        expect(body.comment.article_id).toBe(6);
+        expect(body.comment.author).toBe("butter_bridge");
+        expect(body.comment.body).toBe(
+          "this could have been avoided if we had known before what we know now"
+        );
+        expect(body.comment.comment_id).toBe(19);
+        expect(typeof body.comment.created_at).toBe("string");
+        expect(body.comment.votes).toBe(0);
+      });
+  });
+
+  test.skip("should return error when non-existent username has been entered", () => {
+    const newComment = {
+      username: "Captain Hindsight",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("user does not exist");
       });
   });
 });
