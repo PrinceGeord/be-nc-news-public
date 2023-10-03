@@ -1,5 +1,9 @@
 const app = require("../app");
-const { fetchTopics, fetchArticles } = require("../models/models");
+const {
+  fetchTopics,
+  fetchArticles,
+  fetchArticle,
+} = require("../models/models");
 const endpoints = require("../endpoints.json");
 
 exports.getHealthcheck = (req, res, next) => {
@@ -21,4 +25,15 @@ exports.getArticles = (req, res, next) => {
   fetchArticles().then((articles) => {
     res.status(200).send({ articles });
   });
+};
+
+exports.getArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  fetchArticle(article_id)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
