@@ -1,11 +1,11 @@
 const express = require("express");
 const {
   getHealthcheck,
-  getTopics,
   getArticle,
   getEndpoints,
   getArticles,
-} = require("./controllers/controllers");
+} = require("./controllers/articles.controllers");
+const { getTopics } = require("./controllers/topics.controllers");
 
 const app = express();
 

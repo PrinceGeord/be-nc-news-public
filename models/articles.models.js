@@ -1,16 +1,13 @@
 const db = require("../db/connection");
 
-exports.fetchTopics = () => {
-  return db.query("SELECT * FROM topics;").then(({ rows }) => {
-    return rows;
-  });
+exports.fetchArticles = () => {
+  return db
+    .query("SELECT * FROM articles ORDER BY created_at DESC;")
+    .then(({ rows }) => {
+      return rows;
+    });
 };
 
-exports.fetchArticles = () => {
-  return db.query("SELECT * FROM articles;").then(({ rows }) => {
-    return rows;
-  });
-};
 exports.fetchArticle = (id) => {
   return db
     .query("SELECT * FROM articles WHERE article_id = $1", [id])
@@ -20,4 +17,10 @@ exports.fetchArticle = (id) => {
       }
       return rows[0];
     });
+};
+
+exports.fetchComments = () => {
+  return db.query(`SELECT * FROM comments`).then(({ rows }) => {
+    return rows;
+  });
 };
