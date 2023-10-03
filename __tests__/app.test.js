@@ -40,15 +40,21 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
+        expect(body.article.author).toBe("butter_bridge");
+        expect(body.article.title).toBe(
+          "Living in the shadow of a great man"
+        );
+        expect(body.article.body).toBe(
+          "I find this existence challenging"
+        );
         console.log(body);
-        expect(body.article).hasOwnProperty("author");
-        expect(body.article).hasOwnProperty("title");
-        expect(body.article).hasOwnProperty("article_id");
-        expect(body.article).hasOwnProperty("body");
-        expect(body.article).hasOwnProperty("topic");
-        expect(body.article).hasOwnProperty("created_at");
-        expect(body.article).hasOwnProperty("votes");
-        expect(body.article).hasOwnProperty("article_img_url");
+        expect(body.article.created_at).toBe(
+          "2020-07-09T20:11:00.000Z"
+        );
+        expect(body.article.votes).toBe(100);
+        expect(body.article.article_img_url).hasOwnProperty(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
         expect(body.article.article_id).toBe(1);
         expect(body.article.topic).toBe("mitch");
       });
