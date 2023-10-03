@@ -249,3 +249,74 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe.only("PATCH /api/articles/:article_id", () => {
+  test("should return a 200 status code when patched successfully", () => {
+    const voteChange = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(voteChange)
+      .expect(200);
+  });
+  test("should return updated version of article with votes incremented by specified amount", () => {
+    const voteChange = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(voteChange)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.article_id).toBe(3);
+        expect(article.title).toBe(
+          "Eight pug gifs that remind me of mitch"
+        );
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("icellusedkars");
+        expect(article.body).toBe("some gifs");
+        expect(article.created_at).toBe("2020-11-03T09:12:00.000Z");
+        expect(article.votes).toBe(5);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test("should return updated version of article with votes decremented by specified amount", () => {
+    const voteChange = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(voteChange)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.article_id).toBe(3);
+        expect(article.title).toBe(
+          "Eight pug gifs that remind me of mitch"
+        );
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("icellusedkars");
+        expect(article.body).toBe("some gifs");
+        expect(article.created_at).toBe("2020-11-03T09:12:00.000Z");
+        expect(article.votes).toBe(-100);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test("should return 404 error when valid article_id entered but does not exist", () => {
+    const voteChange = { inc_votes: 54 };
+    return request(app)
+      .patch("/api/articles/2000000")
+      .send(voteChange)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("should return 400 error when invalid article_id entered", () => {
+    const voteChange = { inc_votes: 4 };
+    return request(app)
+      .patch("/api/articles/notanumber")
+      .send(voteChange)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});

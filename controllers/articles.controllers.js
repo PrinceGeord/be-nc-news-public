@@ -2,6 +2,7 @@ const app = require("../app");
 const {
   fetchArticles,
   fetchArticle,
+  amendArticle,
 } = require("../models/articles.models");
 const { fetchComments } = require("../models/comments.models");
 const endpoints = require("../endpoints.json");
@@ -46,6 +47,17 @@ exports.getArticles = (req, res, next) => {
 exports.getArticle = (req, res, next) => {
   const { article_id } = req.params;
   fetchArticle(article_id)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.patchArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  amendArticle(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });
     })
