@@ -3,10 +3,14 @@ const {
   getHealthcheck,
   getTopics,
   getArticle,
+  getEndpoints,
 } = require("./controllers/controllers");
 
 const app = express();
 
+app.use(express.json());
+
+app.get("/api", getEndpoints);
 app.get("/api/healthcheck", getHealthcheck);
 app.get("/api/topics", getTopics);
 

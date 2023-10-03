@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
+const util = require("util");
 
 beforeEach(() => {
   return seed(data);
@@ -73,6 +74,21 @@ describe("GET /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("id not found");
+      });
+  });
+});
+
+describe("/api", () => {
+  test("should return an object describing all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .then(({ body }) => {
+        const sampleEndpoint = require("../endpoints.json");
+        const endpointKeys = Object.keys(sampleEndpoint);
+        endpointKeys.forEach((key) => {
+          const value = body.endpoints[key];
+          util.isDeepStrictEqual(value, sampleEndpoint[key]);
+        });
       });
   });
 });
