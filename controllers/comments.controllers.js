@@ -17,9 +17,20 @@ exports.getArticleComments = (req, res, next) => {
 exports.postComment = (req, res, next) => {
   const { username, body } = req.body;
   const { article_id } = req.params;
-  createComment(body, username, article_id).then(
-    (insertedComment) => {
+  createComment(body, username, article_id)
+    .then((insertedComment) => {
       res.status(201).send({ comment: insertedComment });
-    }
-  );
+    })
+    .catch((err) => {
+      if (err.code !== "22P02") {
+        if (err.detail.split('"')[1] === "users") {
+          err.status = 404;
+          err.msg = "user does not exist";
+        } else if (err.detail.split('"')[1] === "articles") {
+          err.status = 404;
+          err.msg = "article does not exist";
+        }
+      }
+      next(err);
+    });
 };

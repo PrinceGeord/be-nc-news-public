@@ -28,7 +28,6 @@ exports.createComment = (body, username, article_id) => {
       [body, username, article_id]
     )
     .then(({ rows }) => {
-      console.log(rows);
       return rows[0];
     });
 };

@@ -157,7 +157,6 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .then(({ body }) => {
-        console.log(body);
         expect(body.comments).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -180,7 +179,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
-describe.only("POST /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   test("should return a 201 status upon successful post", () => {
     const newComment = {
       username: "butter_bridge",
@@ -201,7 +200,6 @@ describe.only("POST /api/articles/:article_id/comments", () => {
       .post("/api/articles/6/comments")
       .send(newComment)
       .then(({ body }) => {
-        console.log(body.comment);
         expect(body.comment.article_id).toBe(6);
         expect(body.comment.author).toBe("butter_bridge");
         expect(body.comment.body).toBe(
@@ -213,7 +211,7 @@ describe.only("POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test.skip("should return error when non-existent username has been entered", () => {
+  test("should return 404 error when non-existent username has been entered", () => {
     const newComment = {
       username: "Captain Hindsight",
       body: "this could have been avoided if we had known before what we know now",
@@ -224,6 +222,30 @@ describe.only("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .then(({ body }) => {
         expect(body.msg).toBe("user does not exist");
+      });
+  });
+  test("should return 404 error when valid but non-existent article_id is entered", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+    return request(app)
+      .post("/api/articles/2000000000/comments")
+      .send(newComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("should return 400 error when invalid article_id is entered", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+    return request(app)
+      .post("/api/articles/maliciousCode/comments")
+      .send(newComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
       });
   });
 });
