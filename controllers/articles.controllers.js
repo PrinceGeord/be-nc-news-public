@@ -2,8 +2,8 @@ const app = require("../app");
 const {
   fetchArticles,
   fetchArticle,
-  fetchComments,
 } = require("../models/articles.models");
+const { fetchComments } = require("../models/comments.models");
 const endpoints = require("../endpoints.json");
 
 exports.getHealthcheck = (req, res, next) => {

@@ -131,3 +131,49 @@ describe("GET /api/articles", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id/comments", () => {
+  test("should return a 200 status code", () => {
+    return request(app).get("/api/articles/1/comments").expect(200);
+  });
+  test("should return an array of comments for the specified article id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(11);
+        body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+        });
+      });
+  });
+  test("should return an array of comments with the most recent comment displayed first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("should return 'id not found' if valid article_id has been entered but no article can be found", () => {
+    return request(app)
+      .get("/api/articles/200000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("id not found");
+      });
+  });
+  test("should return 'bad request' if a non-valid article_id has been entered into the query", () => {
+    return request(app)
+      .get("/api/articles/malicious_code/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});
