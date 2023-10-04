@@ -18,9 +18,3 @@ exports.fetchArticle = (id) => {
       return rows[0];
     });
 };
-
-exports.fetchComments = () => {
-  return db.query(`SELECT * FROM comments`).then(({ rows }) => {
-    return rows;
-  });
-};
