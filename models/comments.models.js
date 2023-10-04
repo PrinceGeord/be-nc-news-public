@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-
 exports.fetchComments = (article_id) => {
   let query = `SELECT * FROM comments `;
   let values = [];
@@ -12,8 +11,8 @@ exports.fetchComments = (article_id) => {
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({
-          status: 404,
-          msg: "id not found",
+          status: 200,
+          msg: "this article has no comments yet",
         });
       } else return rows;
     });
