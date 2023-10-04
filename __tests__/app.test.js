@@ -244,9 +244,41 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/maliciousCode/comments")
       .send(newComment)
+      .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
-  test.skip("should return 200 status code and successful comment posting if extra properties are added to comment object", () => {});
+  test("should return 201 status code and successful comment posting if extra properties are added to comment object", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I like to overshare",
+      interests: "driving, watching TV, cactus sommelier",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment.article_id).toBe(1);
+        expect(body.comment.author).toBe("butter_bridge");
+        expect(body.comment.body).toBe("I like to overshare");
+        expect(body.comment.comment_id).toBe(19);
+        expect(typeof body.comment.created_at).toBe("string");
+        expect(body.comment.votes).toBe(0);
+      });
+  });
+  test("should return a 400 error if provided object does not have the required properties", () => {
+    const newComment = {
+      username: "butter_bridge",
+      comment: "I hate rules",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment missing required properties");
+      });
+  });
 });

@@ -17,6 +17,11 @@ exports.getArticleComments = (req, res, next) => {
 exports.postComment = (req, res, next) => {
   const { username, body } = req.body;
   const { article_id } = req.params;
+  if (username === undefined || body === undefined) {
+    res
+      .status(400)
+      .send({ msg: "comment missing required properties" });
+  }
   createComment(body, username, article_id)
     .then((insertedComment) => {
       res.status(201).send({ comment: insertedComment });
