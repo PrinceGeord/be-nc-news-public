@@ -5,6 +5,7 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const util = require("util");
 const express = require("express");
+const { fetchComments } = require("../models/comments.models");
 
 app.use(express.json());
 
@@ -330,16 +331,29 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
-describe.skip("DELETE /api/comments/:comment_id", () => {
+describe.only("DELETE /api/comments/:comment_id", () => {
   test("should respond with a 204 status code", () => {
-    return request(app)
-      .delete("/api/comments/4")
-      .expect(204)
-      .then(({ body }) => {
-        console.log(body);
-      });
+    return request(app).delete("/api/comments/4").expect(204);
   });
   test("specified comment should no longer exist after deletion", () => {
-    return request(app).delete("/api/comments/5");
+    return request(app)
+      .delete("/api/comments/5")
+      .then(() => {
+        return fetchComments();
+      })
+      .then((remainingComments) => {
+        const deletedComment = {
+          article_id: 1,
+          author: "icellusedkars",
+          body: "I hate streaming noses",
+          comment_id: 5,
+          created_at: "2020-11-03T21:00:00.000Z",
+          votes: 0,
+        };
+        const commentCheck = remainingComments.find(
+          ({ comment_id }) => comment_id === 5
+        );
+        expect(commentCheck).toBe(undefined);
+      });
   });
 });
