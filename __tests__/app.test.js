@@ -146,7 +146,7 @@ describe("GET /api/articles/:article_id/comments", () => {
           expect(typeof comment.created_at).toBe("string");
           expect(typeof comment.author).toBe("string");
           expect(typeof comment.body).toBe("string");
-          expect(typeof comment.article_id).toBe("number");
+          expect(comment.article_id).toBe(1);
         });
       });
   });
@@ -154,7 +154,6 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .then(({ body }) => {
-        console.log(body);
         expect(body.comments).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -174,6 +173,14 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should return 200 status code with message stating there are no comments for this article when article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.msg).toBe("this article has no comments yet");
       });
   });
 });
