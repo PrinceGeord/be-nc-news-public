@@ -4,6 +4,9 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const util = require("util");
+const express = require("express");
+
+app.use(express.json());
 
 beforeEach(() => {
   return seed(data);
@@ -181,6 +184,109 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.msg).toBe("this article has no comments yet");
+      });
+  });
+});
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should return a 201 status upon successful post", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .expect(201);
+  });
+  test("should return the posted object upon successful post", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .then(({ body }) => {
+        expect(body.comment.article_id).toBe(6);
+        expect(body.comment.author).toBe("butter_bridge");
+        expect(body.comment.body).toBe(
+          "this could have been avoided if we had known before what we know now"
+        );
+        expect(body.comment.comment_id).toBe(19);
+        expect(typeof body.comment.created_at).toBe("string");
+        expect(body.comment.votes).toBe(0);
+      });
+  });
+
+  test("should return 404 error when non-existent username has been entered", () => {
+    const newComment = {
+      username: "Captain Hindsight",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("user does not exist");
+      });
+  });
+  test("should return 404 error when valid but non-existent article_id is entered", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+    return request(app)
+      .post("/api/articles/2000000000/comments")
+      .send(newComment)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("should return 400 error when invalid article_id is entered", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this could have been avoided if we had known before what we know now",
+    };
+    return request(app)
+      .post("/api/articles/maliciousCode/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should return 201 status code and successful comment posting if extra properties are added to comment object", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I like to overshare",
+      interests: "driving, watching TV, cactus sommelier",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment.article_id).toBe(1);
+        expect(body.comment.author).toBe("butter_bridge");
+        expect(body.comment.body).toBe("I like to overshare");
+        expect(body.comment.comment_id).toBe(19);
+        expect(typeof body.comment.created_at).toBe("string");
+        expect(body.comment.votes).toBe(0);
+      });
+  });
+  test("should return a 400 error if provided object does not have the required properties", () => {
+    const newComment = {
+      username: "butter_bridge",
+      comment: "I hate rules",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment missing required properties");
       });
   });
 });

@@ -7,8 +7,14 @@ const {
 } = require("./controllers/articles.controllers");
 const {
   getArticleComments,
+  postComment,
 } = require("./controllers/comments.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
+const {
+  handlePSQLErrors,
+  handle500Errors,
+  handleCustomErrors,
+} = require("./controllers/errors.controllers");
 
 const app = express();
 
@@ -21,24 +27,13 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticle);
 app.get("/api/articles/:article_id/comments", getArticleComments);
+app.post("/api/articles/:article_id/comments", postComment);
 app.all("/*", (req, res, next) => {
   res.status(404).send({ msg: "path not found" });
 });
 
-app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
-    res.status(400).send({ msg: "bad request" });
-  }
-  next(err);
-});
-app.use((err, req, res, next) => {
-  if (err.status) {
-    res.status(err.status).send({ msg: err.msg });
-  }
-  next(err);
-});
-app.use((err, req, res, next) => {
-  res.status(500).send({ msg: "internal server error!" });
-});
+app.use(handlePSQLErrors);
+app.use(handleCustomErrors);
+app.use(handle500Errors);
 
 module.exports = app;
