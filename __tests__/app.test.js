@@ -94,18 +94,18 @@ describe("GET /api", () => {
       });
   });
 });
-describe("GET /api/articles", () => {
+describe.only("GET /api/articles", () => {
   test("should return a 200 status code", () => {
     return request(app).get("/api/articles").expect(200);
   });
-
   test("should return an array of article objects with the correct properties", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
-        expect(body).toHaveLength(13);
+        const { articles } = body;
+        expect(articles).toHaveLength(13);
 
-        body.forEach((article) => {
+        articles.forEach((article) => {
           expect(article).hasOwnProperty("comment_count");
           expect(typeof article.comment_count).toBe("number");
           expect(article).hasOwnProperty("author");
@@ -130,7 +130,29 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
-        expect(body).toBeSortedBy("created_at", { descending: true });
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("should return a list of articles filtered by topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("should return a 404 error if topic does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=notworthdiscussing")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("topic does not exist");
       });
   });
 });
