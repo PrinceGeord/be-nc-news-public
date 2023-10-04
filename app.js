@@ -1,10 +1,11 @@
 const express = require("express");
 const {
   getHealthcheck,
-  getTopics,
   getArticle,
   getEndpoints,
-} = require("./controllers/controllers");
+  getArticles,
+} = require("./controllers/articles.controllers");
+const { getTopics } = require("./controllers/topics.controllers");
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.get("/api", getEndpoints);
 app.get("/api/healthcheck", getHealthcheck);
 app.get("/api/topics", getTopics);
+app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticle);
 app.all("/*", (req, res, next) => {
