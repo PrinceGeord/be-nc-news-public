@@ -249,7 +249,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
-describe.only("PATCH /api/articles/:article_id", () => {
+describe("PATCH /api/articles/:article_id", () => {
   test("should return a 200 status code when patched successfully", () => {
     const voteChange = { inc_votes: 5 };
     return request(app)
@@ -284,6 +284,7 @@ describe.only("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/3")
       .send(voteChange)
       .then(({ body }) => {
+        console.log(body);
         const { article } = body;
         expect(article.article_id).toBe(3);
         expect(article.title).toBe(
@@ -313,6 +314,16 @@ describe.only("PATCH /api/articles/:article_id", () => {
     const voteChange = { inc_votes: 4 };
     return request(app)
       .patch("/api/articles/notanumber")
+      .send(voteChange)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should return 400 error when provided vote change as an invalid datatype", () => {
+    const voteChange = { inc_votes: "STOP THE COUNT!!" };
+    return request(app)
+      .patch("/api/articles/1")
       .send(voteChange)
       .expect(400)
       .then(({ body }) => {
