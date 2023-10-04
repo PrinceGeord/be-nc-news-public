@@ -248,4 +248,5 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+  test.skip("should return 200 status code and successful comment posting if extra properties are added to comment object", () => {});
 });
