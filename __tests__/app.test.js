@@ -380,3 +380,21 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+describe.skip("GET /api/users", () => {
+  test("should return with 200 status code", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+  test("should return with an array of objects", () => {
+    return request(app)
+      .get("/api/users")
+      .then(({ body }) => {
+        const { usernames } = body;
+        expect(usernames).toHaveLength(13);
+        usernames.forEach((username) => {
+          expect(typeof username.username).toBe("string");
+          expect(typeof username.name).toBe("string");
+          expect(username.avatar_url.split("//")[0]).toBe("https:");
+        });
+      });
+  });
+});
