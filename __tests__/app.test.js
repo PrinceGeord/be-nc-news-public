@@ -380,7 +380,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
-describe.skip("GET /api/users", () => {
+describe("GET /api/users", () => {
   test("should return with 200 status code", () => {
     return request(app).get("/api/users").expect(200);
   });
@@ -388,12 +388,12 @@ describe.skip("GET /api/users", () => {
     return request(app)
       .get("/api/users")
       .then(({ body }) => {
-        const { usernames } = body;
-        expect(usernames).toHaveLength(13);
-        usernames.forEach((username) => {
-          expect(typeof username.username).toBe("string");
-          expect(typeof username.name).toBe("string");
-          expect(username.avatar_url.split("//")[0]).toBe("https:");
+        const { users } = body;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(user.avatar_url.split("//")[0]).toBe("https:");
         });
       });
   });

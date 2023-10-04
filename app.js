@@ -11,6 +11,7 @@ const {
   postComment,
 } = require("./controllers/comments.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 const {
   handlePSQLErrors,
   handle500Errors,
@@ -25,7 +26,7 @@ app.get("/api", getEndpoints);
 app.get("/api/healthcheck", getHealthcheck);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
-
+app.get("/api/users", getUsers);
 app.get("/api/articles/:article_id", getArticle);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", postComment);
