@@ -356,4 +356,20 @@ describe.only("DELETE /api/comments/:comment_id", () => {
         expect(commentCheck).toBe(undefined);
       });
   });
+  test("should return 404 if valid comment_id entered but does not exist", () => {
+    return request(app)
+      .delete("/api/comments/20000000000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment does not exist");
+      });
+  });
+  test("should return 400 if invalid comment_id entered", () => {
+    return request(app)
+      .delete("/api/comments/unwarranted_opinion")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });

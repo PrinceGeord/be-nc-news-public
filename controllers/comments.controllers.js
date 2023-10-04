@@ -25,10 +25,8 @@ exports.postComment = (req, res, next) => {
     .catch((err) => {
       if (err.code !== "22P02") {
         if (err.detail.split('"')[1] === "users") {
-          err.status = 404;
           err.msg = "user does not exist";
         } else if (err.detail.split('"')[1] === "articles") {
-          err.status = 404;
           err.msg = "article does not exist";
         }
       }
@@ -37,7 +35,12 @@ exports.postComment = (req, res, next) => {
 };
 exports.deleteComment = (req, res, next) => {
   const { comment_id } = req.params;
-  removeComment(comment_id).then(() => {
-    res.status(204).send();
-  });
+  removeComment(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => {
+      err.msg = "comment does not exist";
+      next(err);
+    });
 };
