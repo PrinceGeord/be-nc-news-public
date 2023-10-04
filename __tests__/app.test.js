@@ -284,7 +284,6 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/3")
       .send(voteChange)
       .then(({ body }) => {
-        console.log(body);
         const { article } = body;
         expect(article.article_id).toBe(3);
         expect(article.title).toBe(
@@ -329,5 +328,18 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
+  });
+});
+describe("DELETE /api/comments/:comment_id", () => {
+  test("should respond with a 204 status code", () => {
+    return request(app)
+      .delete("/api/comments/4")
+      .expect(204)
+      .then(({ body }) => {
+        console.log(body);
+      });
+  });
+  test("specified comment should no longer exist after deletion", () => {
+    return request(app).delete("/api/comments/5");
   });
 });
