@@ -4,6 +4,7 @@ const {
   fetchArticle,
   amendArticle,
 } = require("../models/articles.models");
+const { fetchTopics } = require("../models/topics.models");
 const { fetchComments } = require("../models/comments.models");
 const endpoints = require("../endpoints.json");
 
@@ -19,34 +20,29 @@ exports.getEndpoints = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const { topic } = req.query;
-  Promise.all([fetchArticles(topic), fetchComments()])
-    .then((promises) => {
-      const articles = promises[0];
-      const comments = promises[1];
-      const newArticles = articles.map((article) => {
-        let commentCount = 0;
-        comments.forEach((comment) => {
-          if (comment.article_id === article.article_id) {
-            commentCount += 1;
-          }
-        });
-        const newArticle = {
-          author: article.author,
-          title: article.title,
-          article_id: article.article_id,
-          topic: article.topic,
-          created_at: article.created_at,
-          votes: article.votes,
-          article_img_url: article.article_img_url,
-          comment_count: commentCount,
-        };
-
-        return newArticle;
+  fetchArticles(topic)
+    .then((articles) => {
+      articles.forEach((article) => {
+        article.comment_count = Number(article.comment_count);
       });
-      res.status(200).send({ articles: newArticles });
+      res.status(200).send({ articles });
     })
     .catch((err) => {
-      next(err);
+      if (err.status === 404) {
+        fetchTopics().then((validTopics) => {
+          const validTopicCheck = validTopics.find((element) => {
+            if (element.slug === topic) {
+              return true;
+            }
+          });
+          if (validTopicCheck) {
+            res
+              .status(404)
+              .send({ msg: "No articles exist for this topic" });
+          } else
+            res.status(404).send({ msg: "Topic does not exist" });
+        });
+      } else next(err);
     });
 };
 
@@ -57,7 +53,6 @@ exports.getArticle = (req, res, next) => {
       res.status(200).send({ article });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };

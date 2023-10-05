@@ -94,7 +94,8 @@ describe("GET /api", () => {
       });
   });
 });
-describe.only("GET /api/articles", () => {
+
+describe("GET /api/articles", () => {
   test("should return a 200 status code", () => {
     return request(app).get("/api/articles").expect(200);
   });
@@ -104,7 +105,6 @@ describe.only("GET /api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toHaveLength(13);
-
         articles.forEach((article) => {
           expect(article).hasOwnProperty("comment_count");
           expect(typeof article.comment_count).toBe("number");
@@ -152,7 +152,15 @@ describe.only("GET /api/articles", () => {
       .get("/api/articles?topic=notworthdiscussing")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("topic does not exist");
+        expect(body.msg).toBe("Topic does not exist");
+      });
+  });
+  test("should return a 404 error if topic exists but no articles have been written", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No articles exist for this topic");
       });
   });
 });
