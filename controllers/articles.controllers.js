@@ -57,6 +57,9 @@ exports.getArticle = (req, res, next) => {
 exports.patchArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
+  if (inc_votes === undefined) {
+    res.status(400).send({ msg: "missing inc_vote property" });
+  }
   amendArticle(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article });

@@ -150,7 +150,7 @@ describe("GET /api/articles/:article_id/comments", () => {
           expect(typeof comment.created_at).toBe("string");
           expect(typeof comment.author).toBe("string");
           expect(typeof comment.body).toBe("string");
-          expect(typeof comment.article_id).toBe("number");
+          expect(comment.article_id).toBe(1);
         });
       });
   });
@@ -177,6 +177,14 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should return 200 status code with message stating there are no comments for this article when article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.msg).toBe("this article has no comments yet");
       });
   });
 });
@@ -245,8 +253,41 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/maliciousCode/comments")
       .send(newComment)
+      .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should return 201 status code and successful comment posting if extra properties are added to comment object", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I like to overshare",
+      interests: "driving, watching TV, cactus sommelier",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment.article_id).toBe(1);
+        expect(body.comment.author).toBe("butter_bridge");
+        expect(body.comment.body).toBe("I like to overshare");
+        expect(body.comment.comment_id).toBe(19);
+        expect(typeof body.comment.created_at).toBe("string");
+        expect(body.comment.votes).toBe(0);
+      });
+  });
+  test("should return a 400 error if provided object does not have the required properties", () => {
+    const newComment = {
+      username: "butter_bridge",
+      comment: "I hate rules",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment missing required properties");
       });
   });
 });
@@ -260,23 +301,22 @@ describe("PATCH /api/articles/:article_id", () => {
   });
   test("should return updated version of article with votes incremented by specified amount", () => {
     const voteChange = { inc_votes: 5 };
+    const desiredObj = {
+      article_id: 3,
+      title: "Eight pug gifs that remind me of mitch",
+      topic: "mitch",
+      author: "icellusedkars",
+      created_at: "2020-11-03T09:12:00.000Z",
+      votes: 5,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
     return request(app)
       .patch("/api/articles/3")
       .send(voteChange)
       .then(({ body }) => {
         const { article } = body;
-        expect(article.article_id).toBe(3);
-        expect(article.title).toBe(
-          "Eight pug gifs that remind me of mitch"
-        );
-        expect(article.topic).toBe("mitch");
-        expect(article.author).toBe("icellusedkars");
-        expect(article.body).toBe("some gifs");
-        expect(article.created_at).toBe("2020-11-03T09:12:00.000Z");
-        expect(article.votes).toBe(5);
-        expect(article.article_img_url).toBe(
-          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        );
+        expect(article).toMatchObject(desiredObj);
       });
   });
   test("should return updated version of article with votes decremented by specified amount", () => {
@@ -328,6 +368,16 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should return 400 error when inc_votes property is missing", () => {
+    const voteChange = { votes: 4 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(voteChange)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("missing inc_vote property");
       });
   });
 });
