@@ -18,29 +18,12 @@ exports.getEndpoints = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  Promise.all([fetchArticles(), fetchComments()]).then((promises) => {
-    const articles = promises[0];
-    const comments = promises[1];
-    const newArticles = articles.map((article) => {
-      let commentCount = 0;
-      comments.forEach((comment) => {
-        if (comment.article_id === article.article_id) {
-          commentCount += 1;
-        }
-      });
-      const newArticle = {
-        author: article.author,
-        title: article.title,
-        article_id: article.article_id,
-        topic: article.topic,
-        created_at: article.created_at,
-        votes: article.votes,
-        article_img_url: article.article_img_url,
-        comment_count: commentCount,
-      };
-      return newArticle;
+  fetchArticles().then((articles) => {
+    const formattedArticles = articles.map((article) => {
+      article.comment_count = Number(article.comment_count);
+      return article;
     });
-    res.status(200).send(newArticles);
+    res.status(200).send(formattedArticles);
   });
 };
 
