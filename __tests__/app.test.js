@@ -331,7 +331,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
-describe.only("DELETE /api/comments/:comment_id", () => {
+describe("DELETE /api/comments/:comment_id", () => {
   test("should respond with a 204 status code", () => {
     return request(app).delete("/api/comments/4").expect(204);
   });
