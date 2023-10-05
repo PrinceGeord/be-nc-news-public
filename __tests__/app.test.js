@@ -5,6 +5,7 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const util = require("util");
 const express = require("express");
+const { fetchComments } = require("../models/comments.models");
 
 app.use(express.json());
 
@@ -60,6 +61,7 @@ describe("GET /api/articles/:article_id", () => {
         );
         expect(body.article.article_id).toBe(1);
         expect(body.article.topic).toBe("mitch");
+        expect(body.article.comment_count).toBe(11);
       });
   });
   test("should return error when invalid article_id is received", () => {
@@ -407,6 +409,66 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("missing inc_vote property");
+      });
+  });
+});
+describe("GET /api/users", () => {
+  test("should return with 200 status code", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+  test("should return with an array of objects", () => {
+    return request(app)
+      .get("/api/users")
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(user.avatar_url.split("//")[0]).toBe("https:");
+        });
+      });
+  });
+});
+describe("DELETE /api/comments/:comment_id", () => {
+  test("should respond with a 204 status code", () => {
+    return request(app).delete("/api/comments/4").expect(204);
+  });
+  test("specified comment should no longer exist after deletion", () => {
+    return request(app)
+      .delete("/api/comments/5")
+      .then(() => {
+        return fetchComments();
+      })
+      .then((remainingComments) => {
+        const deletedComment = {
+          article_id: 1,
+          author: "icellusedkars",
+          body: "I hate streaming noses",
+          comment_id: 5,
+          created_at: "2020-11-03T21:00:00.000Z",
+          votes: 0,
+        };
+        const commentCheck = remainingComments.find(
+          ({ comment_id }) => comment_id === 5
+        );
+        expect(commentCheck).toBe(undefined);
+      });
+  });
+  test("should return 404 if valid comment_id entered but does not exist", () => {
+    return request(app)
+      .delete("/api/comments/20000000000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment does not exist");
+      });
+  });
+  test("should return 400 if invalid comment_id entered", () => {
+    return request(app)
+      .delete("/api/comments/unwarranted_opinion")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
       });
   });
 });
