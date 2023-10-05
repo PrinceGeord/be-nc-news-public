@@ -381,7 +381,25 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
-describe.only("DELETE /api/comments/:comment_id", () => {
+describe("GET /api/users", () => {
+  test("should return with 200 status code", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+  test("should return with an array of objects", () => {
+    return request(app)
+      .get("/api/users")
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(user.avatar_url.split("//")[0]).toBe("https:");
+        });
+      });
+  });
+});
+describe("DELETE /api/comments/:comment_id", () => {
   test("should respond with a 204 status code", () => {
     return request(app).delete("/api/comments/4").expect(204);
   });
