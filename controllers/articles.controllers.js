@@ -5,7 +5,6 @@ const {
   amendArticle,
 } = require("../models/articles.models");
 const { fetchTopics } = require("../models/topics.models");
-const { fetchComments } = require("../models/comments.models");
 const endpoints = require("../endpoints.json");
 
 exports.getHealthcheck = (req, res, next) => {
@@ -19,8 +18,8 @@ exports.getEndpoints = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic } = req.query;
-  fetchArticles(topic)
+  const { topic, sortBy } = req.query;
+  fetchArticles(topic, sortBy)
     .then((articles) => {
       articles.forEach((article) => {
         article.comment_count = Number(article.comment_count);
