@@ -61,6 +61,7 @@ describe("GET /api/articles/:article_id", () => {
         );
         expect(body.article.article_id).toBe(1);
         expect(body.article.topic).toBe("mitch");
+        expect(body.article.comment_count).toBe(11);
       });
   });
   test("should return error when invalid article_id is received", () => {
