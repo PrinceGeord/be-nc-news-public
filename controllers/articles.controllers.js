@@ -48,6 +48,7 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticle = (req, res, next) => {
   const { article_id } = req.params;
+
   fetchArticle(article_id)
     .then((article) => {
       article.comment_count = Number(article.comment_count);

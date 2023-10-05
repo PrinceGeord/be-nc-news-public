@@ -165,6 +165,13 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("No articles exist for this topic");
       });
   });
+  test.skip("should sort values by specified column, defaulting to descending order", () => {
+    return request(app)
+      .get("/api/articles?sortBy=title")
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("title", { descending: true });
+      });
+  });
 });
 describe("GET /api/articles/:article_id/comments", () => {
   test("should return a 200 status code", () => {
