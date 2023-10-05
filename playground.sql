@@ -1,7 +1,6 @@
 \c nc_news_test
 
 
-SELECT * FROM articles WHERE article_id=1;
-SELECT * FROM comments WHERE article_id=1;
-SELECT MIN(article_id) FROM articles;
-SELECT MAX(article_id) FROM articles;
+
+
+SELECT articles.article_id, title, articles.topic, articles.author, articles.body, COUNT(comments.article_id) AS comment_count, articles.votes, articles.created_at, article_img_url FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;

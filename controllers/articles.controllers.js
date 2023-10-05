@@ -46,17 +46,9 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticle = (req, res, next) => {
   const { article_id } = req.params;
-  Promise.all([fetchArticle(article_id), fetchComments()])
-    .then((promises) => {
-      const article = promises[0];
-      const comments = promises[1];
-      let commentCount = 0;
-      comments.forEach((comment) => {
-        if (comment.article_id === Number(article_id)) {
-          commentCount++;
-        }
-      });
-      article.comment_count = commentCount;
+  fetchArticle(article_id)
+    .then((article) => {
+      article.comment_count = Number(article.comment_count);
       res.status(200).send({ article });
     })
     .catch((err) => {
