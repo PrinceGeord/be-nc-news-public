@@ -1,6 +1,8 @@
 const db = require("../db/connection");
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (sortBy = created_at, orderBy = DESC) => {
+  let query = {};
+
   return db
     .query("SELECT * FROM articles ORDER BY created_at DESC;")
     .then(({ rows }) => {

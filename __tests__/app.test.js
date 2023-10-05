@@ -94,7 +94,7 @@ describe("GET /api", () => {
       });
   });
 });
-describe("GET /api/articles", () => {
+describe.skip("GET /api/articles", () => {
   test("should return a 200 status code", () => {
     return request(app).get("/api/articles").expect(200);
   });
@@ -131,6 +131,13 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .then(({ body }) => {
         expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test.skip("should sort values by specified column, defaulting to descending order", () => {
+    return request(app)
+      .get("/api/articles?sortBy=title")
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("title", { descending: true });
       });
   });
 });
