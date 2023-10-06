@@ -18,8 +18,8 @@ exports.getEndpoints = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sortBy } = req.query;
-  fetchArticles(topic, sortBy)
+  const { topic, sort_by, order } = req.query;
+  fetchArticles(topic, sort_by, order)
     .then((articles) => {
       articles.forEach((article) => {
         article.comment_count = Number(article.comment_count);

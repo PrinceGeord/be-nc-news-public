@@ -10,6 +10,12 @@ exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
   Promise.all([fetchArticle(article_id), fetchComments(article_id)])
     .then((values) => {
+      if (values[1].length === 0) {
+        return Promise.reject({
+          status: 200,
+          msg: "this article has no comments yet",
+        });
+      }
       res.status(200).send({ comments: values[1] });
     })
     .catch((err) => {

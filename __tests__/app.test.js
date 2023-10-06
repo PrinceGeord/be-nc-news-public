@@ -97,7 +97,7 @@ describe("GET /api", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("should return a 200 status code", () => {
     return request(app).get("/api/articles").expect(200);
   });
@@ -128,7 +128,7 @@ describe.only("GET /api/articles", () => {
         });
       });
   });
-  test.skip("should be sorted by date in descending order", () => {
+  test("should be sorted by date in descending order", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
@@ -165,13 +165,85 @@ describe.only("GET /api/articles", () => {
         expect(body.msg).toBe("No articles exist for this topic");
       });
   });
-  test.skip("should sort values by specified column, defaulting to descending order", () => {
+  test("should sort values by title column, defaulting to descending order", () => {
     return request(app)
-      .get("/api/articles?sortBy=title")
+      .get("/api/articles?sort_by=title")
       .then(({ body }) => {
         const { articles } = body;
 
         expect(articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+  test("should sort values by topic column, defaulting to descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=topic")
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles).toBeSortedBy("topic", { descending: true });
+      });
+  });
+  test("should sort values by comment_count column, defaulting to descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles).toBeSortedBy("comment_count", {
+          descending: true,
+        });
+      });
+  });
+  test("should sort values by article_id column, defaulting to descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles).toBeSortedBy("article_id", {
+          descending: true,
+        });
+      });
+  });
+  test("should sort values by votes column, defaulting to descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+  test("should sort values by created_at by default, in ascending order", () => {
+    return request(app)
+      .get("/api/articles?order=ASC")
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at");
+      });
+  });
+  test("should sort values by author in ascending order", () => {
+    return request(app)
+      .get("/api/articles?order=ASC&sort_by=author")
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("author");
+      });
+  });
+  test("should return a 400 error when requested sort query is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=potato")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sort query");
+      });
+  });
+  test("should return a 400 error when requested order query is invalid", () => {
+    return request(app)
+      .get("/api/articles?order=organisedchaos")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order query");
       });
   });
 });
