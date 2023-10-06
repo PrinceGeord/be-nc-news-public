@@ -18,8 +18,13 @@ afterAll(() => {
 });
 
 describe("api setup", () => {
-  test("returns 200 status", () => {
-    return request(app).get("/api/healthcheck").expect(200);
+  test.only("returns 200 status", () => {
+    return request(app)
+      .get("/api/healthcheck")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.msg).toBe("healthy");
+      });
   });
   test("returns 404 status when unrecognise endpoint is entered", () => {
     return request(app).get("/api/idonotexist").expect(404);

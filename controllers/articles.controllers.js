@@ -8,7 +8,7 @@ const { fetchTopics } = require("../models/topics.models");
 const endpoints = require("../endpoints.json");
 
 exports.getHealthcheck = (req, res, next) => {
-  res.status(200).send({ message: "healthy" });
+  res.status(200).send({ msg: "healthy" });
 };
 exports.getEndpoints = (req, res, next) => {
   res.setHeader("Content-Type", "endpoints/json");
