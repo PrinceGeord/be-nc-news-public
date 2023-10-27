@@ -122,6 +122,20 @@
       "description": "deletes comment",
       "queries": [],
       "exampleResponse":{}
+    },
+    "POST /api/articles/:article_id/comments": {
+      "description": "posts comment to a designated article",
+      "queries": [],
+      "requiredFormat":{"username": "butter_bridge", "body":"I find this existence challenging"},
+      "exampleResponse":{"comment": {
+        "article_id": 6,
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "comment_id": 19,
+        "created_at":"2018-05-30T15:59:13.341Z",
+        "votes": 0}}
+      }
     }
-  }
+    
+  
 
